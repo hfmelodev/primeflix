@@ -33,7 +33,9 @@ export function Movies() {
       } catch (err) {
         setIsLoading(false)
         console.log(`Filme não encontrado: ${err}`)
-        navigate('/')
+        navigate('/', {
+          replace: true,
+        })
       }
     }
 
@@ -74,13 +76,19 @@ export function Movies() {
             Lançamento: {movieDetails.release_date}
           </p>
 
-          <div className="flex flex-wrap items-center justify-end gap-3 mt-6">
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-3 mt-6">
             <Button className="bg-slate-800 text-white hover:bg-slate-700 transition">
               ⭐ Favoritar
             </Button>
-            <Button className="bg-slate-800 text-white hover:bg-slate-700 transition">
-              🎬 Ver Trailer
-            </Button>
+            <a
+              href={`https://www.youtube.com/results?search_query=${movieDetails.title}+Trailer`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button className="bg-slate-800 text-white hover:bg-slate-700 transition">
+                🎬 Ver Trailer
+              </Button>
+            </a>
           </div>
         </div>
       </div>
