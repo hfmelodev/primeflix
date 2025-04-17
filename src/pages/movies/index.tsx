@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { API } from '@/lib/axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
+import { toast } from 'sonner'
 
 interface MoviesParams {
   [key: string]: string | undefined
@@ -42,6 +43,36 @@ export function Movies() {
     fetchMovieDetails()
   }, [id, navigate])
 
+  function handleSaveMovie() {
+    try {
+      const movies = JSON.parse(localStorage.getItem('@primeflix') || '[]')
+
+      // some => função que percorre o array e retorna true ou false
+      const movieAlreadySaved = movies.some((movie: MovieResponse) => {
+        return movie.id === movieDetails?.id
+      })
+
+      if (movieAlreadySaved) {
+        toast.warning('Filme já favoritado!', {
+          description: 'Tente favoritar outro filme.',
+        })
+
+        return
+      }
+
+      localStorage.setItem(
+        '@primeflix',
+        // Busca o array antigo e adiciona o filme salvo
+        JSON.stringify([...movies, movieDetails])
+      )
+
+      toast.success('Filme favoritado com sucesso!')
+    } catch (err) {
+      console.log(`Erro ao salvar filme: ${err}`)
+      toast.error('Erro ao favoritar filme, tente novamente!')
+    }
+  }
+
   if (isLoading || !movieDetails) {
     return (
       <div className="flex items-center justify-center my-auto flex-col space-y-4 bg-slate-100">
@@ -77,7 +108,10 @@ export function Movies() {
           </p>
 
           <div className="flex flex-wrap items-center justify-center md:justify-end gap-3 mt-6">
-            <Button className="bg-slate-800 text-white hover:bg-slate-700 transition">
+            <Button
+              className="bg-slate-800 text-white hover:bg-slate-700 transition"
+              onClick={handleSaveMovie}
+            >
               ⭐ Favoritar
             </Button>
             <a
@@ -85,7 +119,10 @@ export function Movies() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button className="bg-slate-800 text-white hover:bg-slate-700 transition">
+              <Button
+                type="button"
+                className="bg-slate-800 text-white hover:bg-slate-700 transition"
+              >
                 🎬 Ver Trailer
               </Button>
             </a>
